@@ -1,5 +1,7 @@
 package com.gxecard.weChatApiServer.exception;
 
+import com.gxecard.weChatApiServer.enums.ServerStatusEnum;
+
 /**
  * 自定义异常
  */
@@ -9,7 +11,7 @@ public class MessageException extends RuntimeException {
 
     public MessageException(String errorDescription) {
         super(errorDescription);
-        this.errorCode = "99999";
+        this.errorCode = ServerStatusEnum.ERROR.getCode();
     }
 
     public MessageException(String errorCode, String errorDescription) {
