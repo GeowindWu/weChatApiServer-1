@@ -2,7 +2,7 @@ package com.gxecard.weChatApiServer.service;
 
 import com.gxecard.weChatApiServer.dao.ContractConfDao;
 import com.gxecard.weChatApiServer.entity.ContractConf;
-import com.gxecard.weChatApiServer.vo.MiniProgramConf;
+import com.gxecard.weChatApiServer.vo.MiniProgramConfVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,34 +13,34 @@ public class MiniProgramConfService {
     @Autowired
     private ContractConfDao contractConfDao;
 
-    public MiniProgramConf getConfs(){
+    public MiniProgramConfVo getConfs(){
         List<ContractConf> allConfs = contractConfDao.findAll();
-        MiniProgramConf miniProgramConf=new MiniProgramConf();
+        MiniProgramConfVo miniProgramConfVo =new MiniProgramConfVo();
         for (ContractConf conf:allConfs){
-            determinConfBelongsTo(conf,miniProgramConf);
+            determinConfBelongsTo(conf, miniProgramConfVo);
         }
-        return miniProgramConf;
+        return miniProgramConfVo;
     }
 
-    private void determinConfBelongsTo(ContractConf conf, MiniProgramConf miniProgramConf) {
+    private void determinConfBelongsTo(ContractConf conf, MiniProgramConfVo miniProgramConfVo) {
         switch (conf.getConfName()){
             case "appId":
-                miniProgramConf.setMainAppId(conf.getConfDesc());
+                miniProgramConfVo.setMainAppId(conf.getConfDesc());
                 break;
             case "mch_id":
-                miniProgramConf.setMchId(conf.getConfDesc());
+                miniProgramConfVo.setMchId(conf.getConfDesc());
                 break;
             case "sub_mch_id":
-                miniProgramConf.setSubMchId(conf.getConfDesc());
+                miniProgramConfVo.setSubMchId(conf.getConfDesc());
                 break;
             case "appid":
-                miniProgramConf.setAppId(conf.getConfDesc());
+                miniProgramConfVo.setAppId(conf.getConfDesc());
                 break;
             case "sub_appid":
-                miniProgramConf.setSubAppId(conf.getConfDesc());
+                miniProgramConfVo.setSubAppId(conf.getConfDesc());
                 break;
             case "plan_id":
-                miniProgramConf.setPlanId(conf.getConfDesc());
+                miniProgramConfVo.setPlanId(conf.getConfDesc());
                 break;
                 default:
                     break;

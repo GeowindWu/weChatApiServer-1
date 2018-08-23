@@ -3,7 +3,7 @@ package com.gxecard.weChatApiServer.vo;
 import lombok.Data;
 
 @Data
-public class MiniProgramConf {
+public class MiniProgramConfVo {
     /**
      * 微信签约小程序appid
      */
