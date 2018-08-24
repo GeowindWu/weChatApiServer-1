@@ -13,9 +13,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.async.DeferredResult;
-
 import java.util.Map;
 
+/**
+ * 查询签约关系接口
+ */
 @RequestMapping("/checkUserContract")
 @Controller
 public class CheckUserContract extends BaseController{

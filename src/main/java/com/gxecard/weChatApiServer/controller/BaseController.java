@@ -1,14 +1,20 @@
 package com.gxecard.weChatApiServer.controller;
 
 import com.google.common.collect.ImmutableMap;
+import com.gxecard.weChatApiServer.constant.ContractQueryConstant;
 import com.gxecard.weChatApiServer.enums.ServerStatusEnum;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.context.request.async.DeferredResult;
 
 import java.util.Map;
 
+@Controller
 public class BaseController {
-    //DeferredResult deferredResult=new DeferredResult();
+
+     @Autowired
+     ContractQueryConstant queryContractConstant;
+
     public void sealSuccess(DeferredResult deferredResult,Object data){
         Map resultMap= ImmutableMap.of("code", ServerStatusEnum.OK.getCode(),
                 "msg", "",

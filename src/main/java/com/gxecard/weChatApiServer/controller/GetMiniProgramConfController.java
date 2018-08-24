@@ -12,6 +12,9 @@ import org.springframework.web.context.request.async.DeferredResult;
 
 import java.util.Map;
 
+/**
+ * 小程序配置信息获取接口
+ */
 @Controller
 @RequestMapping("/getMiniProgramConf")
 public class GetMiniProgramConfController extends BaseController{
