@@ -6,7 +6,8 @@
     <groupId>com.gxecard</groupId>
     <artifactId>we-chat-api-server</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <packaging>jar</packaging>
+    <packaging>war</packaging>
+    <!--<packaging>jar</packaging>-->
 
     <name>weChatApiServer</name>
     <description>Demo project for Spring Boot</description>
