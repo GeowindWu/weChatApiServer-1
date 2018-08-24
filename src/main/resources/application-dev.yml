@@ -17,4 +17,6 @@ logging:
 weChat:
   apiKey: 192006250b4c09247ec02edce69f6a2d
   queryContractUrl: https://api.mch.weixin.qq.com/papay/partner/querycontract
-
+#服务端口
+server:
+  port: 8081
