@@ -34,6 +34,28 @@ public class WeChatUtil {
         return sb.toString();
     }
 
+    public static String getQueryUserStatusXml(Map<String,String> requestMap,String priKey){
+        String sign= getPSHA256Sign(requestMap, priKey);
+        StringBuilder sb = new StringBuilder();
+        String ramdom = "";
+        for(int i =0; i < 16; i++){
+            Random rd = new Random();
+            ramdom +=rd.nextInt(10);
+        }
+        sb.append("<xml>");
+        sb.append("<appid>").append(requestMap.get("appid")).append("</appid>");
+        sb.append("<sub_appid>").append(requestMap.get("sub_appid")).append("</sub_appid>");
+        sb.append("<mch_id>").append(requestMap.get("mch_id")).append("</mch_id>");
+        sb.append("<sub_mch_id>").append(requestMap.get("sub_mch_id")).append("</sub_mch_id>");
+        sb.append("<nonce_str>").append(ramdom).append("</nonce_str>");
+        sb.append("<contract_id>").append(requestMap.get("contract_id")).append("</contract_id>");
+        sb.append("<sign_type>").append(requestMap.get("sign_type")).append("</sign_type>");
+        sb.append("<sign>").append(sign).append("</sign>");
+        sb.append("<openid>").append(requestMap.get("openid")).append("</openid>");
+        sb.append("</xml>");
+        return sb.toString();
+    }
+
     /**
      * 获取请求签名
      * @param object
