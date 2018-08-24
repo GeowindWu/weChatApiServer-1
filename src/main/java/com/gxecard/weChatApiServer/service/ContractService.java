@@ -20,4 +20,12 @@ public class ContractService {
         }
         return contractVo;
     }
+
+    public Contract getContractByContractId(String contractId){
+        return contractDao.findByContractIdEquals(contractId);
+    }
+
+    public void saveOrUpdateContract(Contract contract){
+        contractDao.save(contract);
+    }
 }

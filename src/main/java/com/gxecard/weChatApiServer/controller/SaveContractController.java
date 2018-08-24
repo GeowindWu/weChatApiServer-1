@@ -2,12 +2,17 @@ package com.gxecard.weChatApiServer.controller;
 
 import com.google.common.base.Strings;
 import com.gxecard.weChatApiServer.constant.ContractQueryResultConstant;
+import com.gxecard.weChatApiServer.dao.ContractDao;
+import com.gxecard.weChatApiServer.entity.Contract;
 import com.gxecard.weChatApiServer.exception.MessageException;
+import com.gxecard.weChatApiServer.service.ContractService;
 import com.gxecard.weChatApiServer.service.MiniProgramConfService;
 import com.gxecard.weChatApiServer.util.WeChatUtil;
+import com.gxecard.weChatApiServer.vo.ContractVo;
 import com.gxecard.weChatApiServer.vo.MiniProgramConfVo;
 import com.gxecard.weChatApiServer.vo.SaveContractResultVo;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,8 +32,13 @@ public class SaveContractController extends BaseController{
 
     @Autowired
     private MiniProgramConfService miniProgramConfService;
+    @Autowired
+    private ContractService contractService;
 
     private SaveContractResultVo saveContractResultVo;
+    private Contract contract;
+    private ContractVo contractVo;
+
 
     @RequestMapping("/save")
     @ResponseBody
@@ -37,20 +47,17 @@ public class SaveContractController extends BaseController{
         MiniProgramConfVo confs = miniProgramConfService.getConfs();
         Map queryContractRequstMap = sealQueryContractRequstMap(confs, contractId);
         String queryContractXml = WeChatUtil.getQueryContractXmlByMap(queryContractRequstMap, queryContractConstant.apiKey);
-//        queryContractXml="<xml>\n" +
-//                " <sign>019C869758CC7F258C42F05CDB9EE361</sign>\n" +
-//                " <mch_id>10000097</mch_id>\n" +
-//                "<sub_mch_id>10010405</sub_mch_id>\n" +
-//                " <appid>wxf5b5e87a6a0fde94</appid>\n" +
-//                " <contract_id>201509160000028648</contract_id>\n" +
-//                " <version>1.0</version>\n" +
-//                "</xml>";
         log.info("请求腾讯查询签约信息报文："+queryContractXml);
         Map<String, Object> queryPreResult = WeChatUtil.httpXmlRequest(queryContractConstant.queryContractUrl, "POST", queryContractXml);
         log.info("腾讯响应查询结果："+queryPreResult);
         checkQueryPreResultIsSuccess(queryPreResult);
+        getContractFromDatabaseAndMakeSureNotNull(contractId);
+        analyzeQueryPreResult2Vo(queryPreResult,userNo);
+        BeanUtils.copyProperties(contractVo,contract);
+        saveOrUpdateContract();
+        makeSuccessReturn();
         DeferredResult deferredResult=new DeferredResult();
-        sealSuccess(deferredResult,queryPreResult);
+        sealSuccess(deferredResult,saveContractResultVo);
         return deferredResult;
     }
 
@@ -82,8 +89,11 @@ public class SaveContractController extends BaseController{
      * @param queryPreResult
      */
     private void checkQueryPreResultIsSuccess(Map<String, Object> queryPreResult) {
-        if (Strings.isNullOrEmpty((String) queryPreResult.get("return_code"))){
+        if (queryPreResult==null){
             throw new MessageException("上游腾讯侧服务器无响应，保存失败！");
+        }
+        if (Strings.isNullOrEmpty((String) queryPreResult.get("return_code"))){
+            throw new MessageException("上游腾讯侧服务器响应异常，保存失败！");
         }
         if (Strings.isNullOrEmpty((String) queryPreResult.get("result_code"))){
             throw new MessageException("上游腾讯侧业务无响应，保存失败！");
@@ -94,5 +104,39 @@ public class SaveContractController extends BaseController{
         if (ContractQueryResultConstant.RESULT_CODE_FAIL.equalsIgnoreCase((String) queryPreResult.get("result_code"))){
             throw new MessageException("上游腾讯侧签约信息查询失败，请核实上送签约信息是否正确！");
         }
+    }
+
+    private void getContractFromDatabaseAndMakeSureNotNull(String contractId) {
+        contract=contractService.getContractByContractId(contractId);
+        if (contract==null){
+            contract=new Contract();
+        }
+    }
+
+    private void analyzeQueryPreResult2Vo(Map<String, Object> queryPreResult,String userNo) {
+        contractVo.setContractId((String) queryPreResult.get("contract_id"));
+        contractVo.setRequestSerial((String) queryPreResult.get("request_serial"));
+        contractVo.setContractCode((String) queryPreResult.get("contract_code"));
+        contractVo.setContractDisplayAccount((String) queryPreResult.get("contract_display_account"));
+        int contractState = Integer.parseInt((String) queryPreResult.get("contract_state"));
+        contractVo.setContractState(contractState);
+        contractVo.setContractSignedTime((String) queryPreResult.get("contract_signed_time"));
+        contractVo.setContractExpiredTime((String) queryPreResult.get("contract_expired_time"));
+        contractVo.setContractTerminatedTime((String) queryPreResult.get("contract_terminated_time"));
+        int contractTerminationMode = Integer.parseInt((String) queryPreResult.get("contract_termination_mode"));
+        contractVo.setContractTerminationMode(contractTerminationMode);
+        contractVo.setContractTerminationRemark((String) queryPreResult.get("contract_termination_remark"));
+        contractVo.setOpenid((String) queryPreResult.get("openid"));
+        contractVo.setSubOpenid((String) queryPreResult.get("sub_openid"));
+        contractVo.setUserNo(userNo);
+    }
+
+    private void saveOrUpdateContract() {
+        contractService.saveOrUpdateContract(contract);
+    }
+
+    private void makeSuccessReturn() {
+        saveContractResultVo.setSave(true);
+        saveContractResultVo.setSaveMessage("保存成功！");
     }
 }

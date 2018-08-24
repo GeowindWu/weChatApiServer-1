@@ -5,4 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ContractDao extends JpaRepository<Contract,Integer> {
     public Contract findByPhoneEquals(String phone);
+    public Contract findByContractIdEquals(String contractId);
 }
