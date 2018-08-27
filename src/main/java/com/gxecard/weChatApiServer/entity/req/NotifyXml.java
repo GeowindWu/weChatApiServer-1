@@ -1,6 +1,5 @@
 package com.gxecard.weChatApiServer.entity.req;
 
-import com.sun.xml.internal.txw2.annotation.XmlElement;
 import lombok.Data;
 
 import javax.xml.bind.annotation.XmlRootElement;

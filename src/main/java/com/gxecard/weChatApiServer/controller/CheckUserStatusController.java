@@ -6,6 +6,7 @@ import com.gxecard.weChatApiServer.service.MiniProgramConfService;
 import com.gxecard.weChatApiServer.util.WeChatUtil;
 import com.gxecard.weChatApiServer.vo.ContractVo;
 import com.gxecard.weChatApiServer.vo.MiniProgramConfVo;
+import com.gxecard.weChatApiServer.vo.SimpleUserState;
 import com.gxecard.weChatApiServer.vo.UserStatusVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,12 +26,13 @@ public class CheckUserStatusController  extends  BaseController{
     @Autowired
     private MiniProgramConfService miniProgramConfService;
 
+    @RequestMapping("/query")
     public DeferredResult checkUserStatus(String phone){
         DeferredResult deferredResult = new DeferredResult();
-        UserStatusVo userStatusVo = new UserStatusVo();
-        ContractVo contractVo = contractService.getContractByPhone(phone);
+        SimpleUserState userState = new SimpleUserState();
+        ContractVo contractVo = contractService.getContractByPhone2(phone);
         if(contractVo == null){
-            failse(deferredResult,userStatusVo,"该用户未签约");
+            failse(deferredResult,"","该用户未签约");
         }else{
             MiniProgramConfVo confs = miniProgramConfService.getConfs();
             Map param = buildQueryUserStatusParam(confs, contractVo.getContractId(), contractVo.getOpenid());
@@ -39,7 +41,14 @@ public class CheckUserStatusController  extends  BaseController{
             Map<String, Object> queryPreResult = WeChatUtil.httpXmlRequest(queryContractConstant.getQueryUserStatus(), "POST", queryXml);
             String result = JSON.toJSONString(queryPreResult);
             log.info("腾讯响应查询结果："+result);
-            sealSuccess(deferredResult,result);
+            if(queryPreResult.get("result_code").equals("SUCCESS")&& queryPreResult.get("return_code ").equals("SUCCESS")){
+                userState.setUserState((String) queryPreResult.get("user_state"));
+                userState.setContractState((String) queryPreResult.get("contract_state"));
+                sealSuccess(deferredResult,userState);
+            }else{
+                failse(deferredResult,"","参数异常");
+            }
+
         }
 
 

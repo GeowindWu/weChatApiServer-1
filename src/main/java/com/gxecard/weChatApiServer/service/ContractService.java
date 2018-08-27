@@ -21,6 +21,16 @@ public class ContractService {
         return contractVo;
     }
 
+    public ContractVo getContractByPhone2(String phone){
+        ContractVo contractVo = null;
+        Contract byPhoneEquals = contractDao.findByPhoneEquals(phone);
+        if (byPhoneEquals!=null){
+            contractVo =new ContractVo();
+            BeanUtils.copyProperties(byPhoneEquals,contractVo);
+        }
+        return contractVo;
+    }
+
     public Contract getContractByContractId(String contractId){
         return contractDao.findByContractIdEquals(contractId);
     }

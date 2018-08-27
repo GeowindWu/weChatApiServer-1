@@ -24,7 +24,7 @@ public class BaseController {
 
     public void failse(DeferredResult deferredResult,Object obj,String msg){
         Map resultMap= ImmutableMap.of("code", ServerStatusEnum.ERROR.getCode(),
-                "msg", "",
+                "msg", msg,
                 "data",obj);
         deferredResult.setResult(resultMap);
     }

@@ -13,10 +13,12 @@ logging:
   level.com.favorite: DEBUG
   level.org.springframework.web: INFO
   level.org.hibernate: ERROR
-#微信接入地址配置
+
+  #微信接入地址配置
 weChat:
   apiKey: 192006250b4c09247ec02edce69f6a2d
   queryContractUrl: https://api.mch.weixin.qq.com/papay/partner/querycontract
+  queryUserStatus: https://api.mch.weixin.qq.com/transit/partnerpay/querystate
 #服务端口
 server:
   port: 8081
