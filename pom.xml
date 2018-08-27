@@ -6,6 +6,7 @@
     <groupId>com.gxecard</groupId>
     <artifactId>we-chat-api-server</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <!--<packaging>war</packaging>-->
     <packaging>jar</packaging>
 
     <name>weChatApiServer</name>
@@ -79,6 +80,7 @@
         <dependency>
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils</artifactId>
+            <version>1.9.3</version>
         </dependency>
 
         <!--guava-->
